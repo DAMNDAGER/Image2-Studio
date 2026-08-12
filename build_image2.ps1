@@ -47,6 +47,9 @@ if ($LASTEXITCODE -ne 0) {
 
 $releaseRoot = Join-Path $PSScriptRoot "..\Image2Studio"
 $releaseApp = Join-Path $releaseRoot "Image2Studio"
+if (Get-Process -Name "Image2Studio" -ErrorAction SilentlyContinue) {
+    throw "Image2Studio is running. Stop the local service before rebuilding the release directory."
+}
 if (Test-Path $releaseApp) {
     Remove-Item -LiteralPath $releaseApp -Recurse -Force
 }

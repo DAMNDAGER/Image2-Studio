@@ -13,9 +13,16 @@ from pathlib import Path
 import httpx
 
 
+def runtime_directory() -> Path:
+    """Return the directory beside the executable when packaged by PyInstaller."""
+    if getattr(sys, "frozen", False):
+        return Path(sys.executable).resolve().parent
+    return Path(__file__).resolve().parent
+
+
 def client_config_path() -> Path:
     configured = os.getenv("IMAGE2_CLIENT_CONFIG")
-    return Path(configured).expanduser() if configured else Path(__file__).parent / "image2-client.json"
+    return Path(configured).expanduser() if configured else runtime_directory() / "image2-client.json"
 
 
 def client_config() -> dict:
@@ -31,7 +38,7 @@ def client_config() -> dict:
 
 def ensure_token_file(config: dict) -> Path:
     configured = config.get("token_path")
-    token_path = Path(configured).expanduser() if configured else Path(__file__).parent / ".image2-token"
+    token_path = Path(configured).expanduser() if configured else runtime_directory() / ".image2-token"
     if not token_path.exists():
         token_path.parent.mkdir(parents=True, exist_ok=True)
         token_path.write_text(secrets.token_urlsafe(32), encoding="utf-8")
@@ -51,7 +58,7 @@ def ensure_server(server: str, config: dict | None = None) -> None:
         raise RuntimeError(f"Image2 service is unhealthy: {exc}") from exc
     if server != "http://127.0.0.1:8765":
         raise RuntimeError(f"Image2 service is unavailable at {server}")
-    root = Path(config.get("service_root") or Path(__file__).parent)
+    root = Path(config.get("service_root") or runtime_directory())
     creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
     launcher = config.get("launcher")
     if getattr(sys, "frozen", False):
@@ -184,7 +191,7 @@ def main() -> int:
         return 1
     payload = response.json()
     urls = payload.get("urls", [payload.get("url")])
-    output_root = Path(config.get("output_dir") or Path(__file__).parent / "outputs").expanduser()
+    output_root = Path(config.get("output_dir") or runtime_directory() / "outputs").expanduser()
     paths = [str(output_root / url.rstrip("/").rsplit("/", 1)[-1]) for url in urls if url]
     print(json.dumps({"urls": urls, "paths": paths, "server": server}, ensure_ascii=False))
     return 0

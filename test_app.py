@@ -1,6 +1,7 @@
 import unittest
 import sqlite3
 import tempfile
+import os
 from contextlib import contextmanager
 from pathlib import Path
 from unittest.mock import AsyncMock, patch
@@ -171,6 +172,10 @@ class Image2ApiTests(unittest.TestCase):
     def test_cli_health_probe_sends_local_token(self, get):
         image2_cli.ensure_server("http://127.0.0.1:8765")
         self.assertEqual(get.call_args.kwargs["headers"], self.headers)
+
+    def test_packaged_cli_reads_config_beside_executable(self):
+        with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, {}, clear=True), patch.object(image2_cli.sys, "frozen", True, create=True), patch.object(image2_cli.sys, "executable", str(Path(directory) / "Image2CLI.exe")):
+            self.assertEqual(image2_cli.client_config_path(), Path(directory) / "image2-client.json")
 
     def test_codex_status_reports_project_connection_without_secrets(self):
         response = self.client.get("/api/codex-status", headers=self.headers)
