@@ -1,5 +1,5 @@
 ---
-name: euzhi-image2
+name: image2
 description: Generate and edit images through the local Image2 service with the active user-configured image provider. Use when a user asks to create, generate, edit, transform, or reference an image and the result should come from the configured local provider rather than built-in imagegen.
 ---
 
@@ -10,7 +10,7 @@ Use the local Image2 service as the primary image-generation path. Do not use th
 ## Workflow
 
 1. Optimize the user's prompt while preserving intent. Make subject, action, composition, viewpoint, style/material, lighting, palette, aspect ratio, and constraints explicit. Do not invent text, logos, people, or objects. For edits, state what must be preserved and what must change.
-2. Prefer the installed global CLI when available: `%CODEX_HOME%\skills\euzhi-image2\Image2CLI.exe --prompt "..."`. The installer places a non-secret `image2-client.json` beside it so the CLI knows the service, token, output directory, and launcher. If the packaged CLI is unavailable, use the project `image2_cli.py` with its absolute path.
+2. Prefer the installed global CLI when available: `%CODEX_HOME%\skills\image2\Image2CLI.exe --prompt "..."`. The installer places a non-secret `image2-client.json` beside it so the CLI knows the service, token, output directory, and launcher. If the packaged CLI is unavailable, use the project `image2_cli.py` with its absolute path.
 3. The local backend uses the active provider selected in the HTML console. There is no default provider; if setup is incomplete, direct the user to the local API settings instead of attempting a real request.
 4. If the local service is unavailable, let the configured CLI launcher start it and retry once. For a restricted Codex sandbox, request one host-approved network-enabled execution for the service process before a real provider request. Keep the service on `127.0.0.1`.
 5. For a public reference image URL, add `--image-url "https://..."`. For a local attachment, add `--image-path "C:\path\to\image.png"`, repeating it for multiple images up to eight.

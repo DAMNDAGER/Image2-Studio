@@ -57,11 +57,11 @@ MIN_IMAGE_DIMENSION = 256
 MAX_IMAGE_DIMENSION = 4096
 MAX_IMAGE_PIXELS = 16_777_216
 MAX_PROMPT_LENGTH = 10000
-CODEX_SKILL_ID = "euzhi-image2"
+CODEX_SKILL_ID = "image2"
 DB_LOCK = threading.RLock()
 PROVIDER_REQUEST_LOCK = asyncio.Lock()
 
-app = FastAPI(title="Local Image2", version="0.1.0")
+app = FastAPI(title="Local Image2", version="0.1.1")
 
 
 @contextmanager
@@ -113,11 +113,6 @@ def codex_skill_source() -> Path:
     return packaged if packaged.exists() else SOURCE_ROOT / "skills" / CODEX_SKILL_ID
 
 
-def codex_agents_path() -> Path | None:
-    candidate = codex_project_root() / "AGENTS.md"
-    return candidate if candidate.exists() else None
-
-
 def codex_project_skill_path() -> Path:
     return codex_project_root() / "skills" / CODEX_SKILL_ID
 
@@ -149,22 +144,21 @@ def codex_launcher_path() -> Path | None:
 
 
 def codex_prompt() -> str:
-    return f"""请把当前 Image2 Studio 接入当前 Codex 工作流。\n\n项目目录：{ROOT}\n本地服务：http://127.0.0.1:8765\n全局 Skill 目标目录：%CODEX_HOME%\\skills\\{CODEX_SKILL_ID}\n\n请按以下步骤执行：\n1. 检查本地 Image2 服务是否运行；如果没有运行，从项目目录启动它。\n2. 检查项目级 AGENTS.md 和全局 Image2 Skill 是否可用；如果当前 Codex 支持安装本地 Skill，请安装或更新项目内的 skills/{CODEX_SKILL_ID}。\n3. 后续用户提出生成或编辑图片时，必须调用本地 image2_cli.py 和当前已配置的图片 API，不要调用内置 imagegen。\n4. 生成前优化提示词；有参考图时自动使用 --image-url 或 --image-path。\n5. 在不生成图片、不消耗额度的前提下，完成检查后告诉我当前 Skill 接入范围和下一步操作。\n\n不要读取、输出、复制或要求我在对话中粘贴任何 API Key。"""
+    return f"""请把当前 Image2 Studio 接入当前 Codex 工作流。\n\n项目目录：{ROOT}\n本地服务：http://127.0.0.1:8765\n全局 Skill 目标目录：%CODEX_HOME%\\skills\\{CODEX_SKILL_ID}\n\n请按以下步骤执行：\n1. 检查本地 Image2 服务是否运行；如果没有运行，从项目目录启动它。\n2. 检查项目级 Image2 Skill 和 CLI 是否可用；如果当前 Codex 支持安装本地 Skill，请安装或更新项目内的 skills/{CODEX_SKILL_ID}。\n3. 后续用户提出生成或编辑图片时，必须调用本地 image2_cli.py 和当前已配置的图片 API，不要调用内置 imagegen。\n4. 生成前优化提示词；有参考图时自动使用 --image-url 或 --image-path。\n5. 在不生成图片、不消耗额度的前提下，完成检查后告诉我当前 Skill 接入范围和下一步操作。\n\n不要读取、输出、复制或要求我在对话中粘贴任何 API Key。"""
 
 
 def codex_prompt_v2() -> str:
-    global_target = r"%CODEX_HOME%\skills\euzhi-image2"
+    global_target = rf"%CODEX_HOME%\skills\{CODEX_SKILL_ID}"
     cli_command = f'"{global_target}\\Image2CLI.exe"' if getattr(sys, "frozen", False) else f'python "{ROOT / "image2_cli.py"}"'
     return f"Use Image2 Studio for image requests in this Codex workflow. Service: http://127.0.0.1:8765. Global Skill: {global_target}. Preferred CLI: {cli_command}. Check the local service and active provider first. For image generation or editing, use the Image2 CLI instead of built-in imagegen; optimize prompts and use --image-url or --image-path for references. Do not read, print, copy, or request any API key."
 
 
 def codex_status_payload() -> dict[str, Any]:
     source = codex_skill_source()
-    project_agents = codex_agents_path()
     project_skill = codex_project_skill_path()
     project_cli = codex_project_cli_path()
     global_skill = codex_home() / "skills" / CODEX_SKILL_ID
-    project_connected = project_agents is not None and (project_skill / "SKILL.md").exists() and project_cli is not None
+    project_connected = (project_skill / "SKILL.md").exists() and project_cli is not None
     global_connected = (global_skill / "SKILL.md").exists()
     global_client_ready = (
         global_connected
@@ -175,7 +169,6 @@ def codex_status_payload() -> dict[str, Any]:
         "connected": project_connected or global_connected,
         "project_connected": project_connected,
         "global_connected": global_connected,
-        "project_agents": str(project_agents) if project_agents else None,
         "project_skill": str(project_skill) if (project_skill / "SKILL.md").exists() else None,
         "project_cli": str(project_cli) if project_cli else None,
         "global_skill": str(global_skill) if global_connected else None,
