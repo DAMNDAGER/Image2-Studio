@@ -1,0 +1,37 @@
+# Local credentials and runtime state
+.image2-token
+image2-client.json
+image2.sqlite3
+image2.sqlite3-*
+image2-server.log
+*.log
+
+# Generated images and local output state
+outputs/*
+!outputs/.gitkeep
+
+# Python caches and environments
+__pycache__/
+*.py[cod]
+*.pyd
+.build-venv/
+.venv/
+venv/
+env/
+
+# Local configuration
+.env
+.env.*
+!.env.example
+
+# PyInstaller and build artifacts
+build/
+dist/
+*.spec
+
+# Local editor and OS files
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+Desktop.ini

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Image2 Provider"
+  short_description: "Use local Image2 with configurable OpenAI-compatible providers"
+  default_prompt: "Generate or edit an image through the active local Image2 provider."
