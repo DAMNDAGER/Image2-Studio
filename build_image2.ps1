@@ -20,10 +20,15 @@ if (-not $python) {
     throw "A Python installation with PyInstaller was not found. Install requirements-build.txt or set IMAGE2_PYTHON to a suitable interpreter."
 }
 
+foreach ($path in @("dist\Image2Studio", "build\Image2Studio", "build\Image2CLI", "Image2Studio.spec", "Image2CLI.spec")) {
+    if (Test-Path $path) {
+        Remove-Item -LiteralPath $path -Recurse -Force
+    }
+}
+
 & $python -m PyInstaller --noconfirm --clean --onedir --name Image2Studio `
     --add-data "static;static" `
     --add-data "skills;skills" `
-    --add-data "AGENTS.md;." `
     --hidden-import app `
     image2_server.py
 
@@ -42,10 +47,13 @@ if ($LASTEXITCODE -ne 0) {
 
 $releaseRoot = Join-Path $PSScriptRoot "..\Image2Studio"
 $releaseApp = Join-Path $releaseRoot "Image2Studio"
+if (Test-Path $releaseApp) {
+    Remove-Item -LiteralPath $releaseApp -Recurse -Force
+}
 New-Item -ItemType Directory -Force -Path $releaseApp | Out-Null
 Copy-Item -Path "dist\Image2Studio\*" -Destination $releaseApp -Recurse -Force
 Copy-Item -Path "start_image2.bat", "start_image2.ps1" -Destination $releaseRoot -Force
-Copy-Item -Path "README-release.md" -Destination (Join-Path $releaseRoot "README.md") -Force
+Copy-Item -Path "README.md" -Destination (Join-Path $releaseRoot "README.md") -Force
 Copy-Item -Path "LICENSE" -Destination $releaseRoot -Force
 
 Write-Host "Built dist\Image2Studio and synchronized ..\Image2Studio"

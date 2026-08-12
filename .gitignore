@@ -24,6 +24,9 @@ env/
 .env.*
 !.env.example
 
+# Codex workspace instructions
+AGENTS.md
+
 # PyInstaller and build artifacts
 build/
 dist/

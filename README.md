@@ -20,7 +20,6 @@ app.py              FastAPI 服务和图片 API 适配层
 image2_cli.py       Codex 与本地服务之间的 CLI
 static/             HTML、CSS 和 JavaScript 控制台
 skills/             Codex Skill 源文件
-AGENTS.md           当前项目的 Codex 工作流规则
 test_app.py         后端测试
 start_image2.*      Windows 启动脚本
 build_image2.ps1    PyInstaller 构建脚本
