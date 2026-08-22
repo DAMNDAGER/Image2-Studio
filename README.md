@@ -1,6 +1,6 @@
-# Image2 Studio
+# Image2 Studio：Codex 本地生图与图片 API 工作台
 
-> A local image workspace for Codex.
+> 让 Codex 直接调用你配置的图片中转站或 OpenAI-compatible 图片 API，支持文生图、参考图编辑和本地历史管理。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Latest Release](https://img.shields.io/github/v/release/DAMNDAGER/Image2-Studio?display_name=tag)](https://github.com/DAMNDAGER/Image2-Studio/releases/latest)
@@ -11,7 +11,11 @@
 
 ## 中文
 
-Image2 Studio 是面向 Codex 的本地图片工作台。它将 Codex 对话、本地 CLI 和用户自行配置的图片 API 连接在一起，使文生图和参考图编辑可以在同一套本地工作流中完成。
+Image2 Studio 是一个面向 **Codex 生图** 的本地图片工作台。它把 Codex 对话、本地 CLI 和图片中转站连接起来，让你可以直接在 Codex 中使用自己配置的图片 API 完成文生图和参考图编辑。
+
+项目适合使用图片中转站、OpenAI-compatible 图片接口，或需要在本地统一管理多个图片模型的用户。它不提供图片额度，也不绑定任何单一服务商，只负责本地配置、请求转发、结果保存和 Codex 接入。
+
+**搜索关键词：** Codex 生图、Codex 图片生成、图片 API、中转站生图、OpenAI 图片 API、文生图、参考图编辑、AI 绘图、本地图片工作流。
 
 HTML 控制台用于配置图片 API、手动生成、查看历史和管理输出；Codex 接入则用于在对话中直接发起图片生成或编辑请求。
 
@@ -28,11 +32,16 @@ Windows 独立版请前往 [GitHub Releases](https://github.com/DAMNDAGER/Image2
 - 提供本地 HTML 控制台，用于配置、手动生成、历史记录和输出管理。
 - 支持 `--dry-run` 模拟请求，在最终图片 API 调用前停止且不消耗额度。
 
-### 为什么需要 Image2 Studio
+### 适合什么场景
 
-- **统一 Codex 图片工作流**：将图片生成和编辑接入 Codex 对话，同时保留本地控制台作为配置和手动操作入口。
-- **统一管理图片 API**：将模型、基础地址、请求路径和鉴权方式保存在本地配置中，支持在多个配置之间切换。
-- **保留本地记录与输出**：生成记录和输出文件由本地服务管理，便于查看和整理。
+- **在 Codex 中直接生图**：在对话里提出生成或编辑需求，由本地 Image2 CLI 调用当前图片 API。
+- **接入图片中转站**：自定义基础地址、模型、生成路径、编辑路径和鉴权方式，兼容常见 OpenAI-compatible 接口。
+- **统一管理多个图片 API**：保存多个配置并快速切换当前 Provider，不必反复修改调用方式。
+- **保留本地结果**：图片保存到本地 outputs 目录，便于查看、下载和后续整理。
+
+### 项目边界
+
+Image2 Studio 是 Codex 的图片 API 适配层和本地工作台，不是图片模型服务商，也不会提供 API Key、账户额度或订阅权益。图片生成费用和可用能力由你配置的中转站或上游图片 API 决定。
 
 ### 工作方式
 
